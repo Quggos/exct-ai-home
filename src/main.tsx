@@ -1,8 +1,7 @@
-import { hydrateRoot } from 'react-dom/client';
+import { createRoot } from 'react-dom/client';
 import App from './App.tsx';
 import './index.css';
 import { HelmetProvider } from 'react-helmet-async';
-import { BrowserRouter } from 'react-router-dom';
 
 // Create preload links for critical resources with optimization for all devices
 const preloadLinks = () => {
@@ -33,17 +32,11 @@ const preloadLinks = () => {
 	document.head.appendChild(fontPreload);
 };
 
-// Execute preload links
-preloadLinks();
-
 // Set up the Helmet context with proper SSR and hydration support
 const helmetContext = {};
 
-hydrateRoot(
-	document.getElementById('root')!,
+createRoot(document.getElementById('root')!).render(
 	<HelmetProvider context={helmetContext}>
-		<BrowserRouter>
-			<App />
-		</BrowserRouter>
+		<App />
 	</HelmetProvider>
 );
