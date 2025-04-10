@@ -23,10 +23,16 @@ export default defineConfig(({ mode }) => ({
     noExternal: ['react-helmet-async']
   },
   build: {
+    outDir: 'dist/client',
     rollupOptions: {
       input: {
         main: path.resolve(__dirname, 'index.html'),
         server: path.resolve(__dirname, 'src/entry-server.tsx')
+      },
+      output: {
+        entryFileNames: 'assets/[name].js',
+        chunkFileNames: 'assets/[name].js',
+        assetFileNames: 'assets/[name].[ext]'
       }
     }
   }

@@ -37,7 +37,7 @@ async function createServer() {
         console.log('HTML transforms applied');
 
         // Load the server entry
-        const { render } = await vite.ssrLoadModule('/src/entry-server.tsx');
+        const { render } = await import(join(process.cwd(), 'dist/server/entry-server.js'));
         console.log('Server entry loaded');
 
         // Render the app HTML

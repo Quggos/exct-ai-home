@@ -5,8 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build && vite build --ssr src/entry-server.tsx",
-    "build:dev": "vite build --mode development && vite build --ssr src/entry-server.tsx --mode development",
+    "build": "tsc && vite build && vite build --ssr src/entry-server.tsx --outDir dist/server",
+    "build:dev": "tsc && vite build --mode development && vite build --ssr src/entry-server.tsx --mode development --outDir dist/server",
     "lint": "eslint .",
     "preview": "vite preview",
     "vercel-build": "npm run build"
