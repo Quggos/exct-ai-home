@@ -1,5 +1,5 @@
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useLocation } from 'react-router-dom';
 
@@ -38,36 +38,14 @@ const SEO: React.FC<SEOProps> = ({
 		? title
 		: `${title} | EXACT AI`;
 
-	// Ensure absolute URL for ogImage
+	// Ensure the OG image has an absolute URL
 	const absoluteOgImage = ogImage.startsWith('http')
 		? ogImage
 		: `https://www.exct.com${ogImage.startsWith('/') ? ogImage : `/${ogImage}`}`;
 
-	// Force update meta tags by adding a key with current timestamp
-	const metaKey = `meta-${Date.now()}`;
-
-	// Add dynamic preload links for critical resources
-	useEffect(() => {
-		// Preload the OG image to ensure it's available for social media crawlers
-		const ogImagePreload = document.createElement('link');
-		ogImagePreload.rel = 'preload';
-		ogImagePreload.href = absoluteOgImage;
-		ogImagePreload.as = 'image';
-		ogImagePreload.type = ogImage.endsWith('.jpg') ? 'image/jpeg' : 'image/png';
-		document.head.appendChild(ogImagePreload);
-
-		return () => {
-			// Clean up preloaded resources when component unmounts
-			if (document.head.contains(ogImagePreload)) {
-				document.head.removeChild(ogImagePreload);
-			}
-		};
-	}, [absoluteOgImage, ogImage]);
-
 	return (
 		<>
-			{/* Using key to force re-render of Helmet */}
-			<Helmet key={metaKey} prioritizeSeoTags={true}>
+			<Helmet prioritizeSeoTags>
 				{/* Basic Meta Tags */}
 				<title>{formattedTitle}</title>
 				<meta name="description" content={description} />
@@ -79,20 +57,16 @@ const SEO: React.FC<SEOProps> = ({
 
 				{/* Open Graph / Facebook */}
 				<meta property="og:type" content={ogType} />
-				<meta property="og:url" content={dynamicCanonicalUrl} />
 				<meta property="og:title" content={formattedTitle} />
 				<meta property="og:description" content={description} />
 				<meta property="og:image" content={absoluteOgImage} />
 				<meta property="og:image:width" content="1200" />
 				<meta property="og:image:height" content="630" />
 				<meta property="og:site_name" content="EXACT AI" />
-				
-				{/* Additional Open Graph tags for better compatibility */}
-				<meta property="og:locale" content="en_US" />
-				
+				<meta property="og:url" content={dynamicCanonicalUrl} />
+
 				{/* Twitter */}
 				<meta name="twitter:card" content={twitterCard} />
-				<meta name="twitter:url" content={dynamicCanonicalUrl} />
 				<meta name="twitter:title" content={formattedTitle} />
 				<meta name="twitter:description" content={description} />
 				<meta name="twitter:image" content={absoluteOgImage} />
@@ -109,13 +83,13 @@ const SEO: React.FC<SEOProps> = ({
 				{/* Language and geo meta tags */}
 				<meta name="language" content="English" />
 				<meta name="geo.region" content="US" />
-
+				
+				{/* Ensure the schema data is properly formatted */}
 				{schema && (
 					<script type="application/ld+json">{JSON.stringify(schema)}</script>
 				)}
 			</Helmet>
 
-			{/* Add a visible h1 for accessibility if provided */}
 			{h1 && <h1 className="sr-only">{h1}</h1>}
 		</>
 	);
