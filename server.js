@@ -9,58 +9,75 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 async function createServer() {
   const app = express();
 
-  // Create Vite server in middleware mode
-  const vite = await createViteServer({
-    server: { middlewareMode: true },
-    appType: 'custom'
-  });
+  try {
+    // Create Vite server in middleware mode
+    const vite = await createViteServer({
+      server: { middlewareMode: true },
+      appType: 'custom',
+      root: process.cwd()
+    });
 
-  // Use Vite's connect instance as middleware
-  app.use(vite.middlewares);
+    // Use Vite's connect instance as middleware
+    app.use(vite.middlewares);
 
-  app.use('*', async (req, res) => {
-    const url = req.originalUrl;
+    app.use('*', async (req, res) => {
+      const url = req.originalUrl;
+      console.log('Processing request for URL:', url);
 
-    try {
-      // Read index.html
-      let template = fs.readFileSync(
-        join(__dirname, 'dist/client/index.html'),
-        'utf-8'
-      );
+      try {
+        // Read index.html
+        const templatePath = join(process.cwd(), 'dist/client/index.html');
+        console.log('Reading template from:', templatePath);
+        
+        let template = fs.readFileSync(templatePath, 'utf-8');
+        console.log('Template read successfully');
 
-      // Apply Vite HTML transforms
-      template = await vite.transformIndexHtml(url, template);
+        // Apply Vite HTML transforms
+        template = await vite.transformIndexHtml(url, template);
+        console.log('HTML transforms applied');
 
-      // Load the server entry
-      const { render } = await vite.ssrLoadModule('/src/entry-server.tsx');
+        // Load the server entry
+        const { render } = await vite.ssrLoadModule('/src/entry-server.tsx');
+        console.log('Server entry loaded');
 
-      // Render the app HTML
-      const { html, helmet } = await render(url);
+        // Render the app HTML
+        const { html, helmet } = await render(url);
+        console.log('App rendered successfully');
 
-      // Inject the app-rendered HTML into the template
-      const finalHtml = template
-        .replace('<!--ssr-outlet-->', html)
-        .replace('<!--helmet-->', `
-          ${helmet.title.toString()}
-          ${helmet.meta.toString()}
-          ${helmet.link.toString()}
-        `);
+        // Inject the app-rendered HTML into the template
+        const finalHtml = template
+          .replace('<!--ssr-outlet-->', html)
+          .replace('<!--helmet-->', `
+            ${helmet.title.toString()}
+            ${helmet.meta.toString()}
+            ${helmet.link.toString()}
+          `);
 
-      res.status(200).set({ 'Content-Type': 'text/html' }).end(finalHtml);
-    } catch (e) {
-      vite.ssrFixStacktrace(e);
-      console.error(e);
-      res.status(500).end(e.message);
-    }
-  });
+        res.status(200).set({ 'Content-Type': 'text/html' }).end(finalHtml);
+      } catch (e) {
+        console.error('Error during request processing:', e);
+        vite.ssrFixStacktrace(e);
+        res.status(500).end(`Error: ${e.message}\n${e.stack}`);
+      }
+    });
 
-  return app;
+    return app;
+  } catch (e) {
+    console.error('Error creating server:', e);
+    throw e;
+  }
 }
 
 // For Vercel deployment
 export default async function handler(req, res) {
-  const app = await createServer();
-  app(req, res);
+  try {
+    console.log('Handler called');
+    const app = await createServer();
+    app(req, res);
+  } catch (e) {
+    console.error('Error in handler:', e);
+    res.status(500).end(`Server Error: ${e.message}\n${e.stack}`);
+  }
 }
 
 // For local development
@@ -69,5 +86,7 @@ if (process.env.NODE_ENV !== 'production') {
     app.listen(3000, () => {
       console.log('Server running at http://localhost:3000');
     });
+  }).catch(e => {
+    console.error('Failed to start server:', e);
   });
 } 
