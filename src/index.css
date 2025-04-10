@@ -1,0 +1,229 @@
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 220 20% 10%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 220 20% 10%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 20% 10%;
+
+    --primary: 217 100% 14%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 215 30% 18%;
+    --secondary-foreground: 0 0% 100%;
+
+    --muted: 220 10% 96%;
+    --muted-foreground: 220 10% 40%;
+
+    --accent: 217 100% 14%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 5 100% 56%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 220 13% 90%;
+    --input: 220 13% 90%;
+    --ring: 5 100% 56%;
+
+    --radius: 0px;
+  }
+
+  * {
+    @apply border-border;
+  }
+  
+  html {
+    @apply scroll-smooth;
+  }
+  
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "ss01", "ss02", "cv01", "cv02", "cv03";
+    font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-medium text-dark tracking-tight;
+  }
+  
+  .title-text {
+    @apply text-tertiary;
+  }
+  
+  .container-wide {
+    @apply w-full max-w-[1600px] mx-auto px-4 md:px-8;
+  }
+  
+  .btn {
+    @apply inline-flex items-center justify-center px-6 py-3 text-base font-medium transition-all duration-200;
+  }
+  
+  .btn-primary {
+    @apply bg-tertiary text-white hover:bg-tertiary/90 transition duration-300;
+  }
+  
+  .btn-secondary {
+    @apply bg-white text-dark border border-dark/20 hover:bg-muted transition duration-300;
+  }
+  
+  .btn-accent {
+    @apply bg-accent text-white hover:bg-accent/90 transition duration-300;
+  }
+  
+  .btn-hero {
+    @apply bg-white text-tertiary hover:bg-white/90 transition duration-300;
+  }
+  
+  .btn-tertiary {
+    @apply bg-tertiary text-white hover:bg-tertiary/90 transition duration-300;
+  }
+  
+  .section-title {
+    @apply text-3xl md:text-4xl font-medium mb-6 tracking-tight;
+  }
+  
+  .section-subtitle {
+    @apply text-lg text-dark/70 mb-10 max-w-2xl leading-relaxed;
+  }
+  
+  .section-padding {
+    @apply py-16 md:py-24;
+  }
+  
+  /* Databricks-inspired animation classes */
+  .hover-scale {
+    @apply transition-transform duration-200 hover:scale-[1.01];
+  }
+  
+  .hover-lift {
+    @apply transition-all duration-300 hover:-translate-y-1 hover:shadow-lg;
+  }
+  
+  .transition-smooth {
+    @apply transition-all duration-300 ease-out;
+  }
+  
+  /* Geometric shapes - inspired by Databricks */
+  .circle {
+    @apply rounded-full bg-tertiary;
+  }
+  
+  .square {
+    @apply bg-tertiary;
+  }
+  
+  .triangle {
+    @apply w-0 h-0 border-solid border-transparent border-b-primary;
+  }
+  
+  /* Section styles */
+  .exct-section {
+    @apply relative overflow-hidden;
+  }
+  
+  .exct-section::before {
+    content: '';
+    @apply absolute -z-10 opacity-10;
+  }
+  
+  .exct-cards {
+    @apply grid gap-6 transition-all duration-300;
+  }
+  
+  .exct-card {
+    @apply bg-white border border-border/40 transition-all duration-300 hover:border-tertiary/50 hover:shadow-elevated;
+  }
+  
+  .exct-gradient-bg {
+    @apply bg-gradient-to-b from-secondary to-tertiary;
+  }
+  
+  .exct-highlight {
+    @apply border-l-4 border-tertiary pl-4;
+  }
+  
+  /* Decorative elements */
+  .decorative-dot {
+    @apply w-2 h-2 rounded-full bg-tertiary;
+  }
+  
+  .decorative-line {
+    @apply h-px bg-tertiary/30;
+  }
+  
+  /* Custom components */
+  .stat-container {
+    @apply flex flex-col items-center justify-center p-6 bg-white border border-gray-100;
+  }
+  
+  .stat-value {
+    @apply text-3xl font-bold text-tertiary mb-2;
+  }
+  
+  .stat-label {
+    @apply text-sm text-gray-600;
+  }
+  
+  .text-gradient-highlight {
+    @apply bg-gradient-to-r from-tertiary via-tertiary to-tertiary bg-clip-text text-transparent;
+  }
+  
+  .glass-card {
+    @apply backdrop-blur-md bg-white/10 border border-white/20 shadow-xl;
+  }
+  
+  .enterprise-card {
+    @apply border border-gray-100 rounded-lg shadow-sm hover:shadow-md transition-shadow p-6 bg-white;
+  }
+  
+  .highlight-number {
+    @apply text-4xl font-bold bg-gradient-to-r from-tertiary to-tertiary bg-clip-text text-transparent;
+  }
+  
+  /* Animation keyframes */
+  @keyframes float {
+    0% {
+      transform: translateY(0px) translateX(0px);
+    }
+    50% {
+      transform: translateY(-10px) translateX(5px);
+    }
+    100% {
+      transform: translateY(0px) translateX(0px);
+    }
+  }
+  
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+  
+  /* Utility for text shadow */
+  .text-shadow {
+    text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  
+  .text-shadow-lg {
+    text-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  }
+  
+  /* 3D-like effect for cards */
+  .card-3d {
+    @apply transition-transform duration-300 hover:transform;
+    transform-style: preserve-3d;
+  }
+  
+  .card-3d:hover {
+    transform: perspective(1000px) rotateX(2deg) rotateY(2deg);
+  }
+}

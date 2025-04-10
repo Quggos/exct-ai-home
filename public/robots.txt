@@ -1,0 +1,46 @@
+
+# Website: https://www.exct.com
+# Global rules for all robots
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /private/
+Disallow: /api/
+
+
+# Special directives for Google
+User-agent: Googlebot
+Allow: /
+Disallow: /admin/
+Crawl-delay: 5
+
+# Special directives for Bing
+User-agent: Bingbot
+Allow: /
+Disallow: /admin/
+Crawl-delay: 5
+
+# Social media crawlers with more permissive access
+User-agent: Twitterbot
+Allow: /
+Allow: /media/
+
+User-agent: facebookexternalhit
+Allow: /
+Allow: /media/
+
+# Image crawlers
+User-agent: Googlebot-Image
+Allow: /media/
+Allow: /images/
+
+# Prevent crawling excessive parameters that create duplicate content
+Disallow: /*?*sort=
+Disallow: /*?*filter=
+Disallow: /*?*utm_
+
+# Crawl delay to prevent server hammering (in seconds)
+Crawl-delay: 5
+
+# Sitemap location
+Sitemap: https://www.exct.com/sitemap.xml
