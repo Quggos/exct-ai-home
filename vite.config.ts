@@ -19,4 +19,15 @@ export default defineConfig(({ mode }) => ({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  ssr: {
+    noExternal: ['react-helmet-async']
+  },
+  build: {
+    rollupOptions: {
+      input: {
+        main: path.resolve(__dirname, 'index.html'),
+        server: path.resolve(__dirname, 'src/entry-server.tsx')
+      }
+    }
+  }
 }));
