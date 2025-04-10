@@ -54,8 +54,8 @@ const SEO: React.FC<SEOProps> = ({
 			// For home page, force a higher priority for meta tags
 			document.title = formattedTitle;
 			
-			// Directly inject critical meta tags for the home page
-			const metaTags = [
+			// Define meta tags for the home page
+			const homePageMetaTags = [
 				{ name: 'description', content: description },
 				{ property: 'og:title', content: formattedTitle },
 				{ property: 'og:description', content: description },
@@ -69,7 +69,7 @@ const SEO: React.FC<SEOProps> = ({
 			];
 			
 			// Remove any existing tags with the same names/properties
-			metaTags.forEach(tag => {
+			homePageMetaTags.forEach(tag => {
 				const selector = tag.name 
 					? `meta[name="${tag.name}"]` 
 					: `meta[property="${tag.property}"]`;
@@ -78,7 +78,7 @@ const SEO: React.FC<SEOProps> = ({
 			});
 			
 			// Add the new tags
-			metaTags.forEach(tag => {
+			homePageMetaTags.forEach(tag => {
 				const metaTag = document.createElement('meta');
 				if (tag.name) metaTag.setAttribute('name', tag.name);
 				if (tag.property) metaTag.setAttribute('property', tag.property);
@@ -103,7 +103,21 @@ const SEO: React.FC<SEOProps> = ({
 			
 			// Clean up directly injected meta tags when unmounting
 			if (isHomePage) {
-				metaTags.forEach(tag => {
+				// Need to redefine the metaTags variable here to avoid the error
+				const homePageMetaTags = [
+					{ name: 'description', content: description },
+					{ property: 'og:title', content: formattedTitle },
+					{ property: 'og:description', content: description },
+					{ property: 'og:image', content: absoluteOgImage },
+					{ property: 'og:url', content: dynamicCanonicalUrl },
+					{ property: 'og:type', content: ogType },
+					{ name: 'twitter:card', content: twitterCard },
+					{ name: 'twitter:title', content: formattedTitle },
+					{ name: 'twitter:description', content: description },
+					{ name: 'twitter:image', content: absoluteOgImage }
+				];
+				
+				homePageMetaTags.forEach(tag => {
 					const selector = tag.name 
 						? `meta[name="${tag.name}"]` 
 						: `meta[property="${tag.property}"]`;
