@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useLocation } from 'react-router-dom';
@@ -37,13 +38,14 @@ const SEO: React.FC<SEOProps> = ({
 		? title
 		: `${title} | EXACT AI`;
 
+	// Ensure the OG image has an absolute URL
 	const absoluteOgImage = ogImage.startsWith('http')
 		? ogImage
 		: `https://www.exct.com${ogImage.startsWith('/') ? ogImage : `/${ogImage}`}`;
 
 	return (
 		<>
-			<Helmet>
+			<Helmet prioritizeSeoTags>
 				{/* Basic Meta Tags */}
 				<title>{formattedTitle}</title>
 				<meta name="description" content={description} />
@@ -81,7 +83,8 @@ const SEO: React.FC<SEOProps> = ({
 				{/* Language and geo meta tags */}
 				<meta name="language" content="English" />
 				<meta name="geo.region" content="US" />
-
+				
+				{/* Ensure the schema data is properly formatted */}
 				{schema && (
 					<script type="application/ld+json">{JSON.stringify(schema)}</script>
 				)}
