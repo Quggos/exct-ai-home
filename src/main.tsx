@@ -31,6 +31,23 @@ const preloadLinks = () => {
 		'https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap';
 	fontPreload.as = 'style';
 	document.head.appendChild(fontPreload);
+
+	// Add base meta tags that should be present regardless of route
+	const baseMetaTags = [
+		{ name: 'viewport', content: 'width=device-width, initial-scale=1.0, maximum-scale=5.0' },
+		{ name: 'description', content: 'EXACT AI offers enterprise AI solutions: generative AI, development, consulting, and workflow automation for businesses.' },
+		{ property: 'og:image', content: 'https://www.exct.com/media/exct-meta-preview.jpg' },
+		{ property: 'og:type', content: 'website' }
+	];
+
+	// Add base meta tags to ensure they're present before React mounts
+	baseMetaTags.forEach(tag => {
+		const metaTag = document.createElement('meta');
+		if (tag.name) metaTag.setAttribute('name', tag.name);
+		if (tag.property) metaTag.setAttribute('property', tag.property);
+		if (tag.content) metaTag.setAttribute('content', tag.content);
+		document.head.appendChild(metaTag);
+	});
 };
 
 // Run preload links on startup

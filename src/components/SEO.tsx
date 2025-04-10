@@ -43,6 +43,9 @@ const SEO: React.FC<SEOProps> = ({
 		? ogImage
 		: `https://www.exct.com${ogImage.startsWith('/') ? ogImage : `/${ogImage}`}`;
 
+	// Force update meta tags by adding a key with current timestamp
+	const metaKey = `meta-${Date.now()}`;
+
 	// Add dynamic preload links for critical resources
 	useEffect(() => {
 		// Preload the OG image to ensure it's available for social media crawlers
@@ -55,13 +58,16 @@ const SEO: React.FC<SEOProps> = ({
 
 		return () => {
 			// Clean up preloaded resources when component unmounts
-			document.head.removeChild(ogImagePreload);
+			if (document.head.contains(ogImagePreload)) {
+				document.head.removeChild(ogImagePreload);
+			}
 		};
-	}, [absoluteOgImage]);
+	}, [absoluteOgImage, ogImage]);
 
 	return (
 		<>
-			<Helmet prioritizeSeoTags={true}>
+			{/* Using key to force re-render of Helmet */}
+			<Helmet key={metaKey} prioritizeSeoTags={true}>
 				{/* Basic Meta Tags */}
 				<title>{formattedTitle}</title>
 				<meta name="description" content={description} />
@@ -80,6 +86,9 @@ const SEO: React.FC<SEOProps> = ({
 				<meta property="og:image:width" content="1200" />
 				<meta property="og:image:height" content="630" />
 				<meta property="og:site_name" content="EXACT AI" />
+				
+				{/* Additional Open Graph tags for better compatibility */}
+				<meta property="og:locale" content="en_US" />
 				
 				{/* Twitter */}
 				<meta name="twitter:card" content={twitterCard} />
