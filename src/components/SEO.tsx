@@ -14,6 +14,7 @@ interface SEOProps {
 	schema?: Record<string, unknown>;
 	noindex?: boolean;
 	h1?: string;
+	isHomePage?: boolean;
 }
 
 const SEO: React.FC<SEOProps> = ({
@@ -27,6 +28,7 @@ const SEO: React.FC<SEOProps> = ({
 	schema,
 	noindex = false,
 	h1,
+	isHomePage = false,
 }) => {
 	const location = useLocation();
 	
@@ -46,8 +48,45 @@ const SEO: React.FC<SEOProps> = ({
 	// Force update meta tags by adding a key with current timestamp
 	const metaKey = `meta-${Date.now()}`;
 
-	// Add dynamic preload links for critical resources
+	// Special handling for home page
 	useEffect(() => {
+		if (isHomePage) {
+			// For home page, force a higher priority for meta tags
+			document.title = formattedTitle;
+			
+			// Directly inject critical meta tags for the home page
+			const metaTags = [
+				{ name: 'description', content: description },
+				{ property: 'og:title', content: formattedTitle },
+				{ property: 'og:description', content: description },
+				{ property: 'og:image', content: absoluteOgImage },
+				{ property: 'og:url', content: dynamicCanonicalUrl },
+				{ property: 'og:type', content: ogType },
+				{ name: 'twitter:card', content: twitterCard },
+				{ name: 'twitter:title', content: formattedTitle },
+				{ name: 'twitter:description', content: description },
+				{ name: 'twitter:image', content: absoluteOgImage }
+			];
+			
+			// Remove any existing tags with the same names/properties
+			metaTags.forEach(tag => {
+				const selector = tag.name 
+					? `meta[name="${tag.name}"]` 
+					: `meta[property="${tag.property}"]`;
+				const existingTags = document.querySelectorAll(selector);
+				existingTags.forEach(existingTag => existingTag.remove());
+			});
+			
+			// Add the new tags
+			metaTags.forEach(tag => {
+				const metaTag = document.createElement('meta');
+				if (tag.name) metaTag.setAttribute('name', tag.name);
+				if (tag.property) metaTag.setAttribute('property', tag.property);
+				metaTag.setAttribute('content', tag.content);
+				document.head.appendChild(metaTag);
+			});
+		}
+
 		// Preload the OG image to ensure it's available for social media crawlers
 		const ogImagePreload = document.createElement('link');
 		ogImagePreload.rel = 'preload';
@@ -61,8 +100,23 @@ const SEO: React.FC<SEOProps> = ({
 			if (document.head.contains(ogImagePreload)) {
 				document.head.removeChild(ogImagePreload);
 			}
+			
+			// Clean up directly injected meta tags when unmounting
+			if (isHomePage) {
+				metaTags.forEach(tag => {
+					const selector = tag.name 
+						? `meta[name="${tag.name}"]` 
+						: `meta[property="${tag.property}"]`;
+					const existingTags = document.querySelectorAll(selector);
+					existingTags.forEach(existingTag => {
+						if (existingTag.parentNode === document.head) {
+							document.head.removeChild(existingTag);
+						}
+					});
+				});
+			}
 		};
-	}, [absoluteOgImage, ogImage]);
+	}, [absoluteOgImage, ogImage, isHomePage, formattedTitle, description, dynamicCanonicalUrl, ogType, twitterCard]);
 
 	return (
 		<>
