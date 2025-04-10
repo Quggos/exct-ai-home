@@ -1,3 +1,4 @@
+
 import React, { lazy, Suspense } from 'react';
 import SEO from '@/components/SEO';
 import Hero from '../components/Hero';
@@ -73,6 +74,7 @@ const Index = () => {
 				ogImage="/media/exct-meta-preview.jpg"
 				schema={homePageSchema}
 				h1="Custom AI Automation for Your Business"
+				isHomePage={true}
 			/>
 
 			<main>
