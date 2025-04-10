@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useLocation } from 'react-router-dom';
 
@@ -42,6 +42,63 @@ const SEO: React.FC<SEOProps> = ({
 	const absoluteOgImage = ogImage.startsWith('http')
 		? ogImage
 		: `https://www.exct.com${ogImage.startsWith('/') ? ogImage : `/${ogImage}`}`;
+
+	// Special handling for the home page (root route)
+	const isHomePage = location.pathname === '/';
+
+	useEffect(() => {
+		// Update the document title immediately for better UX
+		document.title = formattedTitle;
+		
+		// Only add additional meta tags for the homepage
+		if (isHomePage) {
+			// Create and append meta tags directly to ensure they're present before React hydration
+			const homePageMetaTags = [
+				{ property: 'og:title', content: formattedTitle },
+				{ property: 'og:description', content: description },
+				{ property: 'og:image', content: absoluteOgImage },
+				{ property: 'og:url', content: dynamicCanonicalUrl },
+				{ name: 'description', content: description },
+				{ name: 'twitter:card', content: twitterCard },
+				{ name: 'twitter:title', content: formattedTitle },
+				{ name: 'twitter:description', content: description },
+				{ name: 'twitter:image', content: absoluteOgImage }
+			];
+			
+			// Add meta tags to the head
+			homePageMetaTags.forEach(tag => {
+				const meta = document.createElement('meta');
+				Object.entries(tag).forEach(([key, value]) => {
+					meta.setAttribute(key, value);
+				});
+				document.head.appendChild(meta);
+			});
+			
+			// Clean up function to remove meta tags on unmount
+			return () => {
+				// Create a new array here to avoid referencing undefined variable
+				const cleanupMetaTags = [
+					'og:title', 'og:description', 'og:image', 'og:url', 
+					'description', 'twitter:card', 'twitter:title', 
+					'twitter:description', 'twitter:image'
+				];
+				
+				// Remove meta tags by name or property
+				cleanupMetaTags.forEach(tagName => {
+					const selector = `meta[name="${tagName}"], meta[property="${tagName}"]`;
+					const tags = document.querySelectorAll(selector);
+					tags.forEach(tag => {
+						if (tag.parentNode) {
+							tag.parentNode.removeChild(tag);
+						}
+					});
+				});
+			};
+		}
+		
+		// No cleanup needed for non-home pages as Helmet will handle it
+		return undefined;
+	}, [formattedTitle, description, absoluteOgImage, dynamicCanonicalUrl, isHomePage, twitterCard]);
 
 	return (
 		<>
