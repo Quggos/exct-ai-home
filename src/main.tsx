@@ -1,4 +1,3 @@
-
 import { createRoot } from 'react-dom/client';
 import App from './App.tsx';
 import './index.css';
@@ -32,9 +31,6 @@ const preloadLinks = () => {
 	fontPreload.as = 'style';
 	document.head.appendChild(fontPreload);
 };
-
-// Execute preload links
-preloadLinks();
 
 // Set up the Helmet context with proper SSR and hydration support
 const helmetContext = {};
